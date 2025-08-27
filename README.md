@@ -137,3 +137,75 @@ corporate_number,name,date_of_establishment,employee_number,capital_stock,prefec
 - API制限に注意してください（デフォルトで0.2秒のスリープ）
 - 大量データの処理には時間がかかります（10万件で約3時間）
 - レジューム機能を使えば中断後も続きから処理できます
+
+## 今後のアップデート予定
+
+### 開発中の機能
+
+#### 高優先度
+- [ ] **複数法人種別の同時指定**
+  - カンマ区切りで複数指定：`--corporate-type 301,305,401`
+  - 全法人種別を対象：`--corporate-type all`
+
+- [ ] **ページング設定の拡張**
+  - 最大ページ数の上限解除（現在は10ページ固定）
+  - ページサイズのカスタマイズ
+
+#### 中優先度
+- [ ] **統計情報・サマリー機能**
+  - 都道府県別の企業数集計
+  - 従業員数・資本金の分布分析
+  - データ品質レポート（欠損値の割合など）
+
+- [ ] **高度なフィルタリング**
+  - 従業員数・資本金での絞り込み
+  - 複数都道府県の同時指定
+  - 設立年での範囲指定
+
+- [ ] **エラー処理とログ機能**
+  - 失敗した法人番号のリスト出力
+  - 詳細なエラー情報のJSON保存
+  - リトライ用の失敗リスト読み込み
+
+- [ ] **出力形式の拡張**
+  - JSON形式での出力対応
+  - Excel形式での出力対応
+
+- [ ] **並列処理による高速化**
+  - 複数スレッドでの同時実行
+  - バッチ処理の最適化
+
+#### 低優先度
+- [ ] **設定ファイル対応**
+  - YAML/JSONでの設定管理
+  - プロファイル機能
+
+- [ ] **ドライラン・見積もり機能**
+  - 処理時間の事前見積もり
+  - APIを叩かずに動作確認
+
+- [ ] **差分更新機能**
+  - 前回取得から更新された企業のみ取得
+  - 増分バックアップ
+
+### 実装予定のコマンド例
+
+```bash
+# 複数の法人種別を指定
+python gbiz_bulk_collector.py dump --corporate-type 301,305 --pref 13
+
+# 条件付きhydrate
+python gbiz_bulk_collector.py hydrate --min-employees 100 --min-capital 10000000
+
+# 統計情報の表示
+python gbiz_bulk_collector.py stats --in gbiz_enriched.csv
+
+# JSON形式で出力
+python gbiz_bulk_collector.py hydrate --format json --out companies.json
+
+# 並列処理で高速化
+python gbiz_bulk_collector.py hydrate --workers 4 --batch-size 100
+
+# 処理時間の見積もり
+python gbiz_bulk_collector.py estimate --pref all --corporate-type 301
+```
